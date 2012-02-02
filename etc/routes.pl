@@ -6,4 +6,5 @@ my $chat_re = '[\w\.\-]+';
     "/chat/($chat_re)/post" => 'FireCracker::Handler::ChatPostHandler',
     "/chat/($chat_re)/slide" => 'FireCracker::Handler::ChatSlideHandler',
     "/chat/($chat_re)" => 'FireCracker::Handler::ChatRoomHandler',
+    "/embed_code/(.+)" => 'FireCracker::Handler::EmbedCodeHandler',
 ];

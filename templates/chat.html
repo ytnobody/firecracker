@@ -104,17 +104,16 @@ $(function(){
             );
             $('.pretty-time', meta).prettyDate();
 
-            if ( e.ident != 'system'  ) {
+            if ( e.ident != 'system' ) {
                 $('#messages').prepend($('<tr/>').addClass('message').append(avatar).append(message).append(meta));
             }
             
             if(e.html.match(/p\.[0-9]{1,}/)){
                 var page = e.html.split(".")[1];
-                flashMovie.jumpTo(page);
-                //updateSlideNumber();
+                jumpTo(page);
             }
-            if ( e.html.match( /^doc=(.+),title=(.+),author=(.+),description=(.+),iframe_url=(.+)$/ ) ) {
-                var m = e.html.match( /^doc=(.+),title=(.+),author=(.+),description=(.+),iframe_url=(.+)$/ );
+            if ( e.html.match( /^doc=(.+),title=(.+),author=(.+),description=(.+),embed_code=(.+)$/ ) ) {
+                var m = e.html.match( /^doc=(.+),title=(.+),author=(.+),description=(.+),embed_code=(.+)$/ );
                 loadPlayer( m[5] );
                 $('#slide_title').text( m[2] );
                 $('#slide_author').text( m[3] );
@@ -146,14 +145,13 @@ $(function(){
 <script type="text/javascript" src="/static/swfobject.js"></script>    
 
 <script type="text/javascript">
-var flashMovie;
-
 //Load the HTML5 Slide player. Properties for the player can be changed here.
-function loadPlayer( url, width, height ) {
+function loadPlayer( embed_code, width, height ) {
 
-    if ( ! url ) {
-        url = 'http://www.slideshare.net/slideshow/embed_code/11302414';
+    if ( ! embed_code ) {
+        embed_code = '11302414';
     }
+    var url = "/embed_code/" + embed_code;
 
     if ( ! width ) {
         width = 800;
@@ -162,7 +160,7 @@ function loadPlayer( url, width, height ) {
         height = width * 3 / 4;
     }
 
-    var iframe = $('<iframe></iframe>');
+    var iframe = $('<iframe id="fc_slide"></iframe>');
     iframe.attr( { 
         src: url,
         width: width,
@@ -173,19 +171,25 @@ function loadPlayer( url, width, height ) {
         scrolling: 'no'
     } );
 
-    $('#player').html( iframe );
+    $('#player_container').html( iframe );
 
 }
 
 //Jump to the appropriate slide
-function jumpTo(){
-    flashMovie.jumpTo(parseInt(document.getElementById("slidenumber").value));
+function jumpTo( page ){
+    if ( ! page ) {
+        page = parseInt(document.getElementById("slidenumber").value);
+    }
+    var label = $("#fc_slide").contents().find('label.goToSlideLabel > input');
+    label.val( page );
+    label.trigger( 'keyup' );
 }
 
 //Update the slide number in the field for the same
 function updateSlideNumber(){
-    document.getElementById("slidenumber").value = flashMovie.getCurrentSlide();
-    $('#chat').val('p.' + flashMovie.getCurrentSlide());
+    var current_slide_number = $("#fc_slide").contents().find('label.goToSlideLabel > input').val();
+    document.getElementById("slidenumber").value = current_slide_number;
+    $('#chat').val('p.' + current_slide_number);
     doPost($('#ident_system'), $('#chat'));
 }
 
@@ -227,13 +231,13 @@ function loadSlide ( chn, url ) {
         <td id="left" style="width:800px;vertical-align:top;">
             <h1 id="title_container"><span id="slide_title">title</span> <address id="slide_author">author</address></h1>
             <h3 id="slide_description">description</h3>
-            <div id="player">
-                You need Flash player 8+ and JavaScript enabled to view this video.
+            <div id="player_container">
+                You need HTML5 and JavaScript enabled to view this slide.
             </div>
             <div style="margin-left: 150px; margin-top: 10px;">
                 <button id="btn_first" onclick="flashMovie.first();updateSlideNumber();" type="button" value="First">First[H]</button>
                 <button id="btn_prev" onclick="flashMovie.previous();updateSlideNumber();" type="button" value="Previous">Previous[J]</button>
-                <button id="btn_next" onclick="$('a.btnNext').click();updateSlideNumber();" type="button" value="Next">Next[K]</button>
+                <button id="btn_next" onclick="$('#fc_slide').contents().find('a.btnNext').click();updateSlideNumber();" type="button" value="Next">Next[K]</button>
                 <button id="btn_last" onclick="flashMovie.last();updateSlideNumber();" type="button" value="Last">Last[L]</button>
                 <button onclick="jumpTo();updateSlideNumber();" type="button" value="Go to">Go to</button>
                 <input class="floating" style="margin-right:10px;" type="text" id="slidenumber" size="2" value="1" onkeydown="if (event.keyCode == 13) { jumpTo(); }"/>

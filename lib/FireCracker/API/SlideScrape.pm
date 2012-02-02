@@ -10,7 +10,7 @@ sub new {
         ( $data->{title} ) = $content =~ /<meta name="title" property="media:title" content="(.+)" \/>/;
         ( $data->{description} ) = $content =~ /<meta name="description" property="dc:description" content="(.+)" \/>/;
         ( $data->{author} ) = $content =~ /<meta name="dc_creator" property="dc:creator" content="(.+)" \/>/;
-        ( $data->{iframe_url} ) = $content =~ /"iframe_url":"(.+?)"/;
+        ( $data->{embed_code} ) = $content =~ /"iframe_url":"http:\/\/www\.slideshare\.net\/slideshow\/embed_code\/(.+?)"/;
         return $data;
     }, $class;
 }

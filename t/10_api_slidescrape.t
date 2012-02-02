@@ -12,6 +12,7 @@ subtest slidescrape => sub {
         description => 'プロトタイプベースOOPへの誘い    Hachioji.pm #2 LT       @ytnobody ',
         doc => 'hachiojipm2ltytnobody-110219012225-phpapp02',
         title => 'Alluren of prototype-based OOP',
+        iframe_url => 'http://www.slideshare.net/slideshow/embed_code/6980451',
     };
     is_deeply $res, $xp;
 };

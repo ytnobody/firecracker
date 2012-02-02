@@ -113,9 +113,9 @@ $(function(){
                 flashMovie.jumpTo(page);
                 //updateSlideNumber();
             }
-            if ( e.html.match( /^doc=(.+),title=(.+),author=(.+),description=(.+)$/ ) ) {
-                var m = e.html.match( /^doc=(.+),title=(.+),author=(.+),description=(.+)$/ );
-                loadPlayer( m[1] );
+            if ( e.html.match( /^doc=(.+),title=(.+),author=(.+),description=(.+),iframe_url=(.+)$/ ) ) {
+                var m = e.html.match( /^doc=(.+),title=(.+),author=(.+),description=(.+),iframe_url=(.+)$/ );
+                loadPlayer( m[5] );
                 $('#slide_title').text( m[2] );
                 $('#slide_author').text( m[3] );
                 $('#slide_description').text( m[4] );
@@ -148,29 +148,33 @@ $(function(){
 <script type="text/javascript">
 var flashMovie;
 
-//Load the flash player. Properties for the player can be changed here.
-function loadPlayer( doc ) {
-    //clear old flash-player objects
-    $('#player').html('');
+//Load the HTML5 Slide player. Properties for the player can be changed here.
+function loadPlayer( url, width, height ) {
 
-    //allowScriptAccess from other domains
-    var params = { allowScriptAccess: "always" };
-    var atts = { id: "player" };
-
-    if ( ! doc ) {
-        doc = "thirst-upload-800x600-1215534320518707-8";
+    if ( ! url ) {
+        url = 'http://www.slideshare.net/slideshow/embed_code/11302414';
     }
 
-    //doc: The path of the file to be used
-    //startSlide: The number of the slide to start from
-    //rel: Whether to show a screen with related slideshows at the end or not. 0 means false and 1 is true..
-    var flashvars = { doc : doc, startSlide : 1, rel : 0 };
+    if ( ! width ) {
+        width = 800;
+    }
+    if ( ! height ) {
+        height = width * 3 / 4;
+    }
 
-    //Generate the embed SWF file
-    swfobject.embedSWF("http://static.slidesharecdn.com/swf/ssplayer2.swf", "player", "800", "600", "8", null, flashvars, params, atts);
+    var iframe = $('<iframe></iframe>');
+    iframe.attr( { 
+        src: url,
+        width: width,
+        height: height,
+        frameborder: 0,
+        marginwidth: 0,
+        marginheight: 0,
+        scrolling: 'no'
+    } );
 
-    //Get a reference to the player
-    flashMovie = document.getElementById("player");
+    $('#player').html( iframe );
+
 }
 
 //Jump to the appropriate slide
@@ -216,7 +220,7 @@ function loadSlide ( chn, url ) {
 <link rel="stylesheet" href="/static/main.css" />
 </head>
 
-<body onload="loadPlayer();">
+<body onload="loadPlayer(); $('a.btnNext').css('border', '10px solid #f00');">
 
 <table>
     <tr>
@@ -229,7 +233,7 @@ function loadSlide ( chn, url ) {
             <div style="margin-left: 150px; margin-top: 10px;">
                 <button id="btn_first" onclick="flashMovie.first();updateSlideNumber();" type="button" value="First">First[H]</button>
                 <button id="btn_prev" onclick="flashMovie.previous();updateSlideNumber();" type="button" value="Previous">Previous[J]</button>
-                <button id="btn_next" onclick="flashMovie.next();updateSlideNumber();" type="button" value="Next">Next[K]</button>
+                <button id="btn_next" onclick="$('a.btnNext').click();updateSlideNumber();" type="button" value="Next">Next[K]</button>
                 <button id="btn_last" onclick="flashMovie.last();updateSlideNumber();" type="button" value="Last">Last[L]</button>
                 <button onclick="jumpTo();updateSlideNumber();" type="button" value="Go to">Go to</button>
                 <input class="floating" style="margin-right:10px;" type="text" id="slidenumber" size="2" value="1" onkeydown="if (event.keyCode == 13) { jumpTo(); }"/>

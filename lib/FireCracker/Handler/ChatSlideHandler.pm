@@ -26,7 +26,7 @@ sub build_msg {
     my $scraper = $self->application->get( 'API::SlideScrape' );
     my $data = $scraper->( $res->content );
     my @rtn;
-    for my $key ( qw( doc title author description ) ) { 
+    for my $key ( qw( doc title author description iframe_url ) ) { 
         push @rtn, sprintf( "$key=%s", $data->{$key} );
     }
     return Encode::decode_utf8( join ",", @rtn );
